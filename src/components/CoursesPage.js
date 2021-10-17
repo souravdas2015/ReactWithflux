@@ -1,7 +1,11 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { getCourses } from '../api/courseApi.js';
+// import { getCourses } from '../api/courseApi.js';
+import courseStore from '../stores/courseStore';
+import CourseList from './CourseList.js';
+import { Link } from 'react-router-dom';
+import { loadCourses, deleteCourse } from '../actions/courseActions';
 function CoursesPage() {
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState(courseStore.getCourses());
   // constructor(props) {
   //   super(props);
 
@@ -10,33 +14,24 @@ function CoursesPage() {
   //     courses: [],
   //   };
   // }
-  useEffect(() => {
-    getCourses().then((_course) => setCourses(_course));
-  }, []);
 
-  const renderRow = (course) => {
-    return (
-      <tr key={course.id}>
-        <td>{course.title}</td>
-        <td>{course.authorId}</td>
-        <td>{course.category}</td>
-      </tr>
-    );
-  };
+  useEffect(() => {
+    courseStore.addChangeListner(onChange);
+    if (courses.length === 0) loadCourses();
+    return () => courseStore.removeChangeListner(onChange); // cleanup on unmount
+    // getCourses().then((_course) => setCourses(_course));
+  }, [courses.length]);
+  function onChange() {
+    setCourses(courseStore.getCourses());
+  }
 
   return (
     <Fragment>
       <h2>Courses</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author Id</th>
-            <th>Category</th>
-          </tr>
-        </thead>
-        <tbody>{courses.map((course) => renderRow(course))}</tbody>
-      </table>
+      <Link className="btn btn-primary" to="/course">
+        Add Course
+      </Link>
+      <CourseList courses={courses} deleteCourse={deleteCourse} />
     </Fragment>
   );
 }

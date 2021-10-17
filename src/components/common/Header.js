@@ -1,10 +1,20 @@
 import React from 'react';
-
+import { NavLink } from 'react-router-dom';
 export const Header = () => {
+  const activeStyle = { color: 'orange' };
   return (
     <nav>
-      <a href="/">Home</a> | <a href="/about">About</a> |{' '}
-      <a href="/courses">Courses</a>
+      <NavLink to="/" exact activeStyle={activeStyle}>
+        Home
+      </NavLink>
+      {' | '}
+      <NavLink to="/about" activeStyle={activeStyle}>
+        About
+      </NavLink>
+      {' | '}
+      <NavLink to="/courses" activeStyle={activeStyle}>
+        Courses
+      </NavLink>
     </nav>
   );
 };
